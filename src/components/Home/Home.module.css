@@ -1,0 +1,22 @@
+.scrollContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 200px);
+  gap: 10px;
+  margin: 40px auto 0;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  max-height: 80dvh;
+  padding: 10px;
+  border: 10px solid rgb(136, 118, 94);
+  border-radius: 25px;
+  position: relative;
+  grid-auto-rows: 200px;
+}
+.filler {
+  position: absolute;
+  top: 20%;
+  left: 0;
+  text-align: center;
+  width: 100%;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}

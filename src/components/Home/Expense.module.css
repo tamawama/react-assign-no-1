@@ -1,0 +1,61 @@
+.expenseContainer {
+  background-color: antiquewhite;
+  padding: 10px;
+  padding-bottom: 5px;
+  border: 9px solid rgb(180, 176, 161);
+  height: 200px;
+  width: 200px;
+  border-radius: 25px;
+  display: grid;
+  grid-template-rows: 1fr 18px 18px;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  gap: 10px;
+}
+.buttons button {
+  height: 18px;
+  background: transparent;
+  border-style: hidden;
+}
+
+.buttons button:hover {
+  text-decoration: underline;
+}
+
+#delete {
+  color: rgb(204, 7, 0);
+}
+
+.title {
+  font-family: monospace;
+  font-weight: 600;
+  font-size: 24px;
+  width: 100%;
+}
+
+.category {
+  font-family: monospace;
+  font-weight: 500;
+  font-size: 16px;
+  width: 100%;
+}
+
+.amount {
+  font-family: monospace;
+  font-weight: 500;
+  font-size: 16px;
+  width: 100%;
+}
+
+.date {
+  font-family: monospace;
+  font-weight: 500;
+  font-size: 10px;
+  width: 100%;
+  align-self: last baseline;
+  text-align: center;
+}

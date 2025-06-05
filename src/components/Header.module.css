@@ -1,0 +1,45 @@
+.header {
+  grid-template-columns: 100px auto;
+  height: 60px;
+  min-height: 60px;
+  background: #b57000;
+  background: linear-gradient(
+    90deg,
+    rgba(181, 112, 0, 1) 0%,
+    rgba(186, 165, 47, 1) 50%,
+    rgba(209, 127, 92, 1) 100%
+  );
+  min-width: 383px;
+  position: relative;
+}
+
+.button {
+  width: 60px;
+  height: 50px;
+  background-color: rgba(117, 117, 117, 0.614);
+  background-image: url("../assets/menu-lines.svg");
+  background-size: 65%;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: 4px solid rgb(255, 182, 24);
+  border-radius: 20px;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}
+
+.button:hover {
+  background-color: rgba(105, 80, 0, 0.7);
+  border-color: rgb(192, 147, 76);
+}
+
+.h1 {
+  text-align: center;
+  color: #fff;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  min-width: 283px;
+  position: absolute;
+  width: 100%;
+  top: 5px;
+}

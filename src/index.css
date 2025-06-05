@@ -1,0 +1,28 @@
+/* global reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ensure we can use relative height to screen with % */
+body {
+  min-width: 800px;
+  min-height: 500px;
+  line-height: 1.5;
+}
+#root {
+  height: 100dvh;
+}
+
+.div-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+main {
+  width: auto;
+  display: flex;
+  flex: 1 0 auto;
+}
