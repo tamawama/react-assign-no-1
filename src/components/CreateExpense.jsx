@@ -1,7 +1,7 @@
 import Input from "./Input";
 import styles from "./CreateExpense.module.css";
-import { useContext, useRef, memo } from "react";
-import { ExpenseContext } from "../App";
+import { useRef, memo } from "react";
+import { useExpenseDispatch } from "../contexts/ExpenseContext";
 
 // memoizing here does nothing, function prop always changing on page change
 const CreateExpense = memo(function CreateExpense({ onCancel }) {
@@ -9,7 +9,7 @@ const CreateExpense = memo(function CreateExpense({ onCancel }) {
   const categoryRef = useRef();
   const amountRef = useRef();
   const dateRef = useRef();
-  const onSave = useContext(ExpenseContext);
+  const expenseContext = useExpenseDispatch();
 
   function cancelHandler() {
     titleRef.current.value = "";
@@ -27,7 +27,7 @@ const CreateExpense = memo(function CreateExpense({ onCancel }) {
       amount: amountRef.current.value,
       date: dateRef.current.value,
     };
-    onSave(action);
+    expenseContext(action);
     cancelHandler();
   }
 

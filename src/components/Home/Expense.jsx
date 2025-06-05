@@ -1,16 +1,16 @@
 import { useCallback, useContext } from "react";
 import styles from "./Expense.module.css";
-import { ExpenseContext } from "../../App";
+import { useExpenseDispatch } from "../../contexts/ExpenseContext";
 
 export default function Expense({ title, category, amount, date, id, onEdit }) {
-  console.log(date);
-  const [year, month, day] = date.split("-");
-  console.log(year, month, day);
+  const dispatchExpense = useExpenseDispatch();
+
   // why is month 0-11...
+  const [year, month, day] = date.split("-");
   const parsedDate = new Date(year, month - 1, day);
-  const dispatch = useContext(ExpenseContext);
+
   function deleteHandler() {
-    dispatch({ type: "delete", title, category, amount, date, id });
+    dispatchExpense({ type: "delete", title, category, amount, date, id });
   }
   //
   return (

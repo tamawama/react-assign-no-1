@@ -1,12 +1,13 @@
 import { useContext, useImperativeHandle, useRef } from "react";
 import Input from "../Input";
 import styles from "./EditModal.module.css";
-import { ExpenseContext } from "../../App";
+import { useExpenseDispatch } from "../../contexts/ExpenseContext";
 
 export default function EditModal({ ref }) {
+  const expenseDispatch = useExpenseDispatch();
+
   const dialog = useRef();
   const expenseId = useRef(NaN);
-  const expenseDispatch = useContext(ExpenseContext);
   const titleRef = useRef();
   const categoryRef = useRef();
   const amountRef = useRef();

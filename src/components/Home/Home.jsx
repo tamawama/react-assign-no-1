@@ -2,8 +2,10 @@ import EditModal from "./EditModal";
 import Expense from "./Expense";
 import styles from "./Home.module.css";
 import { useRef } from "react";
+import { useExpense } from "../../contexts/ExpenseContext";
 
-export default function Home({ expenses }) {
+export default function Home() {
+  const expenses = useExpense().expenses;
   const editModal = useRef();
   function editHandler(title, category, amount, date, id) {
     editModal.current.open(title, category, amount, date, id);
