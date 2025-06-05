@@ -1,4 +1,4 @@
-import { getSidebarState } from "../contexts/SidebarContext.jsx";
+import { getSidebarState } from "../../contexts/SidebarContext";
 import styles from "./Sidebar.module.css";
 
 export default function Sidebar({ setPage }) {

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import CreateExpense from "../features/create-expense/CreateExpense";
-import Header from "../components/Header";
-import Home from "../features/Home/Home";
-import Sidebar from "../components/Sidebar";
-import Login from "../components/Login";
+import Header from "../features/menu/Header";
+import Home from "../features/home/Home";
+import Sidebar from "../features/menu/Sidebar";
+import Login from "../features/login/Login";
 import Provider from "./Provider";
 
 function App() {
