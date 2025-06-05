@@ -1,12 +1,10 @@
 import { useState } from "react";
-import CreateExpense from "./components/CreateExpense";
-import Header from "./components/Header";
-import Home from "./components/Home/Home";
-import Sidebar from "./components/Sidebar";
-import Login from "./components/Login";
-import { ExpenseProvider } from "./contexts/ExpenseContext";
-import { SidebarProvider } from "./contexts/SidebarContext";
-import ContextWrapper from "./contexts/ContextWrapper";
+import CreateExpense from "../features/create-expense/CreateExpense";
+import Header from "../components/Header";
+import Home from "../features/Home/Home";
+import Sidebar from "../components/Sidebar";
+import Login from "../components/Login";
+import Provider from "./Provider";
 
 function App() {
   // replace with routing
@@ -16,7 +14,7 @@ function App() {
   }
 
   return (
-    <ContextWrapper>
+    <Provider>
       <div className="div-container">
         <Header />
         {/* need to adjust css with the sidebar "aside" */}
@@ -27,7 +25,7 @@ function App() {
           {page === "login" && <Login pageHandler={setPage} />}
         </main>
       </div>
-    </ContextWrapper>
+    </Provider>
   );
 }
 

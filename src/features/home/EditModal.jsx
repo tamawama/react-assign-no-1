@@ -1,5 +1,5 @@
 import { useContext, useImperativeHandle, useRef } from "react";
-import Input from "../Input";
+import Input from "../../components/Input";
 import styles from "./EditModal.module.css";
 import { useExpenseDispatch } from "../../contexts/ExpenseContext";
 

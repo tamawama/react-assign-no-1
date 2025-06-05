@@ -1,7 +1,7 @@
-import Input from "./Input";
+import Input from "../../components/Input";
 import styles from "./CreateExpense.module.css";
 import { useRef, memo } from "react";
-import { useExpenseDispatch } from "../contexts/ExpenseContext";
+import { useExpenseDispatch } from "../../contexts/ExpenseContext";
 
 // memoizing here does nothing, function prop always changing on page change
 const CreateExpense = memo(function CreateExpense({ onCancel }) {
