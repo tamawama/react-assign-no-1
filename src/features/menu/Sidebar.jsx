@@ -1,14 +1,16 @@
-import { getSidebarState } from "../../contexts/SidebarContext";
+import { Link } from "react-router-dom";
 import styles from "./Sidebar.module.css";
+import { getSidebarState } from "../../contexts/SidebarContext";
 
-export default function Sidebar({ setPage }) {
+export default function Sidebar() {
   const sidebarStatus = getSidebarState();
+
   return (
     sidebarStatus && (
       <aside className={styles.aside}>
-        <button onClick={() => setPage("home")}>Home</button>
-        <button onClick={() => setPage("create")}>Create New Expense</button>
-        <button onClick={() => setPage("login")}>Signup</button>
+        <Link to={{ pathname: "/" }}>Home</Link>
+        <Link to={{ pathname: "/create" }}>Create New Expense</Link>
+        <Link to={{ pathname: "/login" }}>Signup</Link>
       </aside>
     )
   );

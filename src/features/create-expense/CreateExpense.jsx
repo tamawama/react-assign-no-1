@@ -2,21 +2,23 @@ import Input from "../../components/Input";
 import styles from "./CreateExpense.module.css";
 import { useRef, memo } from "react";
 import { useExpenseDispatch } from "../../contexts/ExpenseContext";
+import { useNavigate } from "react-router-dom";
 
 // memoizing here does nothing, function prop always changing on page change
-const CreateExpense = memo(function CreateExpense({ onCancel }) {
+const CreateExpense = memo(function CreateExpense() {
   const titleRef = useRef();
   const categoryRef = useRef();
   const amountRef = useRef();
   const dateRef = useRef();
   const expenseContext = useExpenseDispatch();
+  const navigator = useNavigate();
 
   function cancelHandler() {
     titleRef.current.value = "";
     categoryRef.current.value = "";
     amountRef.current.value = 0;
     dateRef.current.value = null;
-    onCancel("home");
+    navigator("/");
   }
 
   function saveHandler() {

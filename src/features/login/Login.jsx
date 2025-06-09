@@ -1,8 +1,10 @@
 import { useState, useRef } from "react";
 import Input from "../../components/Input";
 import styles from "./Login.module.css";
+import { useNavigate } from "react-router-dom";
 
-export default function Login({ pageHandler }) {
+export default function Login() {
+  const nav = useNavigate();
   const user = useRef();
   const password = useRef();
 
@@ -15,7 +17,8 @@ export default function Login({ pageHandler }) {
     setUserClass(isValidUser ? "" : styles.required);
     setPassClass(isValidPass ? "" : styles.required);
     if (isValidPass && isValidUser) {
-      pageHandler("home");
+      nav("/");
+      // pageHandler("home");
     }
   }
 
