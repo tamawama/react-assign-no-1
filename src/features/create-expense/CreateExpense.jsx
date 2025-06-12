@@ -1,50 +1,67 @@
+import { Link, redirect, useLoaderData } from "react-router-dom";
 import Input from "../../components/Input";
 import styles from "./CreateExpense.module.css";
-import { useRef, memo } from "react";
-import { useExpenseDispatch } from "../../contexts/ExpenseContext";
-import { useNavigate } from "react-router-dom";
+import { Form } from "react-router-dom";
+import { createExpense, getCategories } from "../../utils/expenseApi";
 
 // memoizing here does nothing, function prop always changing on page change
-const CreateExpense = memo(function CreateExpense() {
-  const titleRef = useRef();
-  const categoryRef = useRef();
-  const amountRef = useRef();
-  const dateRef = useRef();
-  const expenseContext = useExpenseDispatch();
-  const navigator = useNavigate();
-
-  function cancelHandler() {
-    titleRef.current.value = "";
-    categoryRef.current.value = "";
-    amountRef.current.value = 0;
-    dateRef.current.value = null;
-    navigator("/");
-  }
-
-  function saveHandler() {
-    const action = {
-      type: "create",
-      title: titleRef.current.value,
-      category: categoryRef.current.value,
-      amount: amountRef.current.value,
-      date: dateRef.current.value,
-    };
-    expenseContext(action);
-    cancelHandler();
-  }
+function CreateExpense() {
+  const loaderData = useLoaderData();
 
   return (
     <div className={styles.div}>
-      <Input label="Title" ref={titleRef} />
-      <Input label="Category" ref={categoryRef} />
-      <Input label="Expense Amount" type="number" ref={amountRef} />
-      <Input label="Expense Date" type="date" ref={dateRef} />
-      <div className={styles.buttons}>
-        <button onClick={cancelHandler}>Cancel</button>
-        <button onClick={saveHandler}>Save</button>
-      </div>
+      {!loaderData && (
+        <h1>Issue fetching categories... please try again later</h1>
+      )}
+      {loaderData && (
+        <Form method="POST">
+          <Input label="Title" />
+          <Input
+            label="Category"
+            type="select"
+            options={loaderData.map((data) => {
+              return { value: data.id, text: data.name };
+            })}
+          />
+          <Input label="Expense Amount" type="number" step="0.01" />
+          <div className={styles.buttons}>
+            <Link to="/">Cancel</Link>
+            <button type="submit">Save</button>
+          </div>
+        </Form>
+      )}
     </div>
   );
-});
+}
 
 export default CreateExpense;
+
+export async function loader() {
+  const response = await getCategories();
+  if (!response.ok || response.status === 500) {
+    alert("Error fetching categories");
+    return null;
+  }
+  const resData = await response.json();
+  console.log(resData);
+  return resData;
+}
+
+export async function action({ request }) {
+  const formData = await request.formData();
+  const expenseData = {
+    title: formData.get("Title"),
+    value: Number(formData.get("Expense Amount")),
+    categoryId: Number(formData.get("Category")),
+  };
+  console.log(expenseData);
+  const response = await createExpense(expenseData);
+  if (response.ok && response.status === 201) return redirect("/");
+  if (!response.ok) {
+    return new Response(
+      JSON.stringify({ message: "Could not validate user-token" }),
+      { status: 500 }
+    );
+  }
+  return response;
+}

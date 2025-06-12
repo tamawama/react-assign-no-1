@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Header from "../features/menu/Header";
-import Sidebar from "../features/menu/Sidebar";
+import Header from "./routes/nav/Header";
+import Sidebar from "./routes/nav/Sidebar";
 import Provider from "./Provider";
 import Router from "./router";
 

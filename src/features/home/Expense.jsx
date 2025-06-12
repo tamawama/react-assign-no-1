@@ -1,16 +1,22 @@
-import { useCallback, useContext } from "react";
 import styles from "./Expense.module.css";
-import { useExpenseDispatch } from "../../contexts/ExpenseContext";
+import { hasValidToken } from "../../utils/auth";
+import { useNavigate } from "react-router-dom";
+import { deleteExpense } from "../../utils/expenseApi";
 
 export default function Expense({ title, category, amount, date, id, onEdit }) {
-  const dispatchExpense = useExpenseDispatch();
-
+  const nav = useNavigate();
   // why is month 0-11...
-  const [year, month, day] = date.split("-");
-  const parsedDate = new Date(year, month - 1, day);
+  const parsedDate = new Date(date);
 
-  function deleteHandler() {
-    dispatchExpense({ type: "delete", title, category, amount, date, id });
+  async function deleteHandler() {
+    if (!hasValidToken()) {
+      return nav("/auth");
+    }
+    const response = await deleteExpense(id);
+    if (!response.ok || response.status === 404 || response.status === 500) {
+      return;
+    }
+    return nav("");
   }
   //
   return (
@@ -18,14 +24,14 @@ export default function Expense({ title, category, amount, date, id, onEdit }) {
       <div className={styles.expenseContainer}>
         <div>
           <h1 className={styles.title}>{title}</h1>
-          <h2 className={styles.category}>{category}</h2>
+          <h2 className={styles.category}>{category.name}</h2>
           <p className={styles.amount}>{"$" + amount}</p>
         </div>
         <p className={styles.date}>{parsedDate.toDateString()}</p>
         <div className={styles.buttons}>
           <button
             id={styles.edit}
-            onClick={() => onEdit(title, category, amount, date, id)}
+            onClick={() => onEdit(title, category, amount, id)}
           >
             edit
           </button>

@@ -2,40 +2,52 @@ import { useContext, useImperativeHandle, useRef } from "react";
 import Input from "../../components/Input";
 import styles from "./EditModal.module.css";
 import { useExpenseDispatch } from "../../contexts/ExpenseContext";
+import { updateExpense } from "../../utils/expenseApi";
+import { useNavigate } from "react-router-dom";
 
-export default function EditModal({ ref }) {
+export default function EditModal({ ref, categories }) {
   const expenseDispatch = useExpenseDispatch();
+
+  const nav = useNavigate();
 
   const dialog = useRef();
   const expenseId = useRef(NaN);
   const titleRef = useRef();
   const categoryRef = useRef();
   const amountRef = useRef();
-  const dateRef = useRef();
 
   useImperativeHandle(ref, () => {
     return {
-      open(title, category, amount, date, id) {
+      open(title, category, amount, id) {
         expenseId.current = id;
         titleRef.current.value = title;
-        categoryRef.current.value = category;
+        console.log(categoryRef.current);
+        categoryRef.current.value = category.id;
         amountRef.current.value = amount;
-        dateRef.current.value = date;
         dialog.current.showModal();
       },
     };
   });
 
-  function saveHandler() {
-    const action = {
-      type: "edit",
-      title: titleRef.current.value,
-      category: categoryRef.current.value,
-      amount: amountRef.current.value,
-      date: dateRef.current.value,
-      id: expenseId.current,
+  async function saveHandler() {
+    const expenseData = {
+      body: {
+        title: titleRef.current.value,
+        categoryId: categoryRef.current.value,
+        value: amountRef.current.value,
+      },
+      expenseId: expenseId.current,
     };
-    expenseDispatch(action);
+    const response = await updateExpense(expenseData);
+    if (!response.ok) {
+      alert("Issue deleting expense.");
+      return nav("/");
+    }
+    if (response.status === 500 || response.status === 404) {
+      alert("Issue deleting expense.");
+      return nav("/");
+    }
+    return nav("/");
   }
 
   return (
@@ -46,9 +58,21 @@ export default function EditModal({ ref }) {
       <div className={styles.center}>
         <div className={styles.modal}>
           <Input label="Title" ref={titleRef} />
-          <Input label="Category" ref={categoryRef} />
-          <Input label="Expense Amount" type="number" ref={amountRef} />
-          <Input label="Expense Date" type="date" ref={dateRef} />
+          <Input
+            label="Category"
+            type="select"
+            options={categories.map((data) => {
+              return { value: data.id, text: data.name };
+            })}
+            ref={categoryRef}
+          />
+
+          <Input
+            label="Expense Amount"
+            type="number"
+            ref={amountRef}
+            step={0.01}
+          />
           <form method="dialog" className={styles.buttons}>
             <button>Cancel</button>
             <button onClick={saveHandler}>Save</button>
