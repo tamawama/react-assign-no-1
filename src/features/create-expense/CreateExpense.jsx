@@ -1,4 +1,4 @@
-import { Link, redirect, useLoaderData } from "react-router-dom";
+import { Link, useLoaderData, redirect } from "react-router-dom";
 import Input from "../../components/Input";
 import styles from "./CreateExpense.module.css";
 import { Form } from "react-router-dom";
@@ -43,7 +43,7 @@ export async function loader() {
     return null;
   }
   const resData = await response.json();
-  console.log(resData);
+
   return resData;
 }
 
@@ -54,9 +54,23 @@ export async function action({ request }) {
     value: Number(formData.get("Expense Amount")),
     categoryId: Number(formData.get("Category")),
   };
-  console.log(expenseData);
   const response = await createExpense(expenseData);
-  if (response.ok && response.status === 201) return redirect("/");
+  if (response.ok && response.status === 201) {
+    const localData = JSON.parse(sessionStorage.getItem("expenses"));
+    const newLocalExpense = {
+      ...expenseData,
+    };
+    let newData = "";
+    if (!localData || localData.invalid) {
+      newData = JSON.stringify([newLocalExpense]);
+    } else {
+      newData = JSON.stringify([...localData, newLocalExpense]);
+    }
+    sessionStorage.setItem("expenses", newData);
+    console.log("Action:", newData);
+
+    return redirect("/");
+  }
   if (!response.ok) {
     return new Response(
       JSON.stringify({ message: "Could not validate user-token" }),

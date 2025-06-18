@@ -50,6 +50,7 @@ export async function action({ request }) {
     response = await signup(authData);
   }
 
+  // client side issues
   if (
     response.status === 422 ||
     response.status === 401 ||
@@ -59,7 +60,7 @@ export async function action({ request }) {
   }
 
   if (!response.ok) {
-    return Response(
+    return new Response(
       JSON.stringify({ message: "Could not authenticate user." }),
       { status: 500 }
     );

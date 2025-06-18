@@ -6,6 +6,19 @@ export default function Input({
   ref,
   ...props
 }) {
+  if (type === "fetching") {
+    content = (
+      <>
+        <p>fetching...</p>
+      </>
+    );
+    return (
+      <div className={styles.input}>
+        <label>{label}</label>
+        {content}
+      </div>
+    );
+  }
   let content = (
     <>
       <input ref={ref} type={type} name={label} {...props} />

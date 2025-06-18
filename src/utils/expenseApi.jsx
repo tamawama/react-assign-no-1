@@ -41,7 +41,7 @@ export async function logout() {
   });
   return response;
 }
-export async function getExpenses() {
+export async function fetchExpenses() {
   const response = await fetch(`${EXPENSE_API_ENDPOINT}/expenses`, {
     method: "GET",
     headers: {

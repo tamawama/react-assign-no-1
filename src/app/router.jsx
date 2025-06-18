@@ -16,7 +16,7 @@ const router = createBrowserRouter([
     id: "root",
     loader: hasValidToken,
     children: [
-      { path: "", Component: Home, loader: expensesLoader },
+      { index: true, Component: Home, loader: expensesLoader },
       {
         loader: authProtection,
         children: [

@@ -29,15 +29,20 @@ export default function Expense({ title, category, amount, date, id, onEdit }) {
         </div>
         <p className={styles.date}>{parsedDate.toDateString()}</p>
         <div className={styles.buttons}>
-          <button
-            id={styles.edit}
-            onClick={() => onEdit(title, category, amount, id)}
-          >
-            edit
-          </button>
-          <button id={styles.delete} onClick={deleteHandler}>
-            delete
-          </button>
+          {onEdit && (
+            <>
+              <button
+                id={styles.edit}
+                onClick={() => onEdit(title, category, amount, id)}
+              >
+                edit
+              </button>
+              <button id={styles.delete} onClick={deleteHandler}>
+                delete
+              </button>
+            </>
+          )}
+          {!onEdit && <button id={styles.edit}>connecting...</button>}
         </div>
       </div>
     </>

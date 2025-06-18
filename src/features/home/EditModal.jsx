@@ -1,8 +1,8 @@
-import { useImperativeHandle, useRef } from "react";
+import { Suspense, useImperativeHandle, useRef } from "react";
 import Input from "../../components/Input";
 import styles from "./EditModal.module.css";
 import { updateExpense } from "../../utils/expenseApi";
-import { useNavigate } from "react-router-dom";
+import { Await, useNavigate } from "react-router-dom";
 
 export default function EditModal({ ref, categories }) {
   const nav = useNavigate();
@@ -18,7 +18,6 @@ export default function EditModal({ ref, categories }) {
       open(title, category, amount, id) {
         expenseId.current = id;
         titleRef.current.value = title;
-        console.log(categoryRef.current);
         categoryRef.current.value = category.id;
         amountRef.current.value = amount;
         dialog.current.showModal();
@@ -55,14 +54,18 @@ export default function EditModal({ ref, categories }) {
       <div className={styles.center}>
         <div className={styles.modal}>
           <Input label="Title" ref={titleRef} />
-          <Input
-            label="Category"
-            type="select"
-            options={categories.map((data) => {
-              return { value: data.id, text: data.name };
-            })}
-            ref={categoryRef}
-          />
+          <Suspense fallback={<Input label="Category" type="fetching" />}>
+            <Await resolve={categories}>
+              <Input
+                label="Category"
+                type="select"
+                options={categories.map((data) => {
+                  return { value: data.id, text: data.name };
+                })}
+                ref={categoryRef}
+              />
+            </Await>
+          </Suspense>
 
           <Input
             label="Expense Amount"
@@ -72,7 +75,11 @@ export default function EditModal({ ref, categories }) {
           />
           <form method="dialog" className={styles.buttons}>
             <button>Cancel</button>
-            <button onClick={saveHandler}>Save</button>
+            <Suspense fallback={<p>"loading..."</p>}>
+              <Await resolve={categories}>
+                <button onClick={saveHandler}>Save</button>
+              </Await>
+            </Suspense>
           </form>
         </div>
       </div>
