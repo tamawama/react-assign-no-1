@@ -13,7 +13,10 @@ export default function Expense({ title, category, amount, date, id, onEdit }) {
       return nav("/auth");
     }
     const response = await deleteExpense(id);
-    if (!response.ok || response.status === 404 || response.status === 500) {
+    if (!response.ok) {
+      if (response.status === 404) {
+        alert("Expense wasn't found.");
+      }
       return;
     }
     return nav("");

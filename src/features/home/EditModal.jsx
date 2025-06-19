@@ -36,11 +36,11 @@ export default function EditModal({ ref, categories }) {
     };
     const response = await updateExpense(expenseData);
     if (!response.ok) {
-      alert("Issue deleting expense.");
+      alert("Issue editing expense.");
       return nav("/");
     }
     if (response.status === 500 || response.status === 404) {
-      alert("Issue deleting expense.");
+      alert("Issue editing expense.");
       return nav("/");
     }
     return nav("/");
