@@ -3,7 +3,36 @@ import { hasValidToken } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
 import { deleteExpense } from "../../utils/expenseApi";
 
-export default function Expense({ title, category, amount, date, id, onEdit }) {
+export type ExpenseData = {
+  id: number;
+  title: string;
+  category: { id: number; name: string };
+  value: number;
+  createdAt: string;
+};
+
+type ExpenseProps = {
+  id: number;
+  title: string;
+  category: { id: number; name: string };
+  amount: number;
+  date: string;
+  onEdit?: (
+    title: string,
+    category: { id: number; name: string },
+    amount: number,
+    id: number
+  ) => void;
+};
+
+export default function Expense({
+  title,
+  category,
+  amount,
+  date,
+  id,
+  onEdit,
+}: ExpenseProps) {
   const nav = useNavigate();
   // why is month 0-11...
   const parsedDate = new Date(date);

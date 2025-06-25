@@ -1,20 +1,20 @@
-import EditModal from "./EditModal";
-import Expense from "./Expense";
+import EditModal, { EditModalHandler } from "./EditModal";
+import Expense, { ExpenseData } from "./Expense";
 import styles from "./Home.module.css";
-import { Suspense, useRef } from "react";
+import { ReactNode, Suspense, useRef } from "react";
 import { hasValidToken } from "../../utils/auth";
 import { Await, useLoaderData, useNavigate } from "react-router-dom";
 import { fetchExpenses, getCategories } from "../../utils/expenseApi";
 
 export default function Home() {
-  const editModal = useRef();
+  const editModal = useRef<EditModalHandler>(null);
   const nav = useNavigate();
 
   const { expenses, categories } = useLoaderData();
 
-  const localExpenses = JSON.parse(sessionStorage.getItem("expenses"));
-  console.log("home:", localExpenses);
+  const localExpenses = JSON.parse(sessionStorage.getItem("expenses") || "{}");
 
+  // @ts-ignore idk how to properly type data here
   expenses.then((data) => {
     if (!data.invalid) {
       sessionStorage.setItem("expenses", JSON.stringify(data));
@@ -23,11 +23,18 @@ export default function Home() {
     }
   });
 
-  function editHandler(title, category, amount, id) {
+  function editHandler(
+    title: string,
+    category: { id: number; name: string },
+    amount: number,
+    id: number
+  ) {
     if (!hasValidToken()) {
       return nav("/auth");
     }
-    editModal.current.open(title, category, amount, id);
+    if (editModal !== null && editModal.current != null) {
+      editModal.current.open({ title, category, amount, id });
+    }
   }
   const ExpensesFallback = (
     <>
@@ -37,7 +44,7 @@ export default function Home() {
       {localExpenses &&
         !localExpenses.invalid &&
         (localExpenses.length > 0 ? (
-          localExpenses.map((expense) => {
+          localExpenses.map((expense: ExpenseData) => {
             return (
               <Expense
                 key={`_expense${expense.id}`}
@@ -71,7 +78,7 @@ export default function Home() {
                 {expenses &&
                   !expenses.invalid &&
                   (expenses.length > 0 ? (
-                    expenses.map((expense) => {
+                    expenses.map((expense: ExpenseData) => {
                       return (
                         <Expense
                           key={`_expense${expense.id}`}
@@ -113,6 +120,5 @@ export async function loader() {
 
   const categoryResponse = await getCategories();
   const categories = await categoryResponse.json();
-  console.log(categories);
   return { expenses, categories };
 }

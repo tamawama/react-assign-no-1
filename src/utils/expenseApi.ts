@@ -1,6 +1,6 @@
 const EXPENSE_API_ENDPOINT = "http://localhost:8080/api";
 
-export async function getCategories() {
+export async function getCategories(): Promise<Response> {
   const response = await fetch(`${EXPENSE_API_ENDPOINT}/categories`, {
     method: "GET",
     headers: {
@@ -10,7 +10,10 @@ export async function getCategories() {
   return response;
 }
 
-export async function signup(authData) {
+export async function signup(authData: {
+  email: string;
+  password: string;
+}): Promise<Response> {
   const response = await fetch(`${EXPENSE_API_ENDPOINT}/signup`, {
     method: "POST",
     credentials: "include",
@@ -22,7 +25,10 @@ export async function signup(authData) {
   return response;
 }
 
-export async function login(authData) {
+export async function login(authData: {
+  email: string;
+  password: string;
+}): Promise<Response> {
   const response = await fetch(`${EXPENSE_API_ENDPOINT}/login`, {
     method: "POST",
     credentials: "include",
@@ -34,14 +40,14 @@ export async function login(authData) {
   return response;
 }
 
-export async function logout() {
+export async function logout(): Promise<Response> {
   const response = await fetch(`${EXPENSE_API_ENDPOINT}/logout`, {
     method: "POST",
     credentials: "include",
   });
   return response;
 }
-export async function fetchExpenses() {
+export async function fetchExpenses(): Promise<Response> {
   const response = await fetch(`${EXPENSE_API_ENDPOINT}/expenses`, {
     method: "GET",
     headers: {
@@ -52,9 +58,11 @@ export async function fetchExpenses() {
   return response;
 }
 
-export async function getExpense(expenseId) {}
-
-export async function createExpense(expenseData) {
+export async function createExpense(expenseData: {
+  title: string;
+  value: number;
+  categoryId: number;
+}): Promise<Response> {
   const response = await fetch(`${EXPENSE_API_ENDPOINT}/expenses`, {
     method: "POST",
     credentials: "include",
@@ -67,7 +75,10 @@ export async function createExpense(expenseData) {
   return response;
 }
 
-export async function updateExpense({ body, expenseId }) {
+export async function updateExpense(
+  body: { title: string; value: number; categoryId: number },
+  expenseId: number
+) {
   const response = await fetch(
     `${EXPENSE_API_ENDPOINT}/expenses/${expenseId}`,
     {
@@ -82,7 +93,7 @@ export async function updateExpense({ body, expenseId }) {
   return response;
 }
 
-export async function deleteExpense(expenseId) {
+export async function deleteExpense(expenseId: number) {
   const response = await fetch(
     `${EXPENSE_API_ENDPOINT}/expenses/${expenseId}`,
     {

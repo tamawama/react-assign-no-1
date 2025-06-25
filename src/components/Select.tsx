@@ -1,33 +1,29 @@
 import styles from "./Input.module.css";
-export default function Input({
+
+interface InputProps {
+  label: string;
+  type: string;
+  options: { text: string; value: string | number }[] | null;
+  ref?: React.RefObject<HTMLSelectElement | null>;
+  props?: [];
+}
+
+export default function Select({
   label,
-  type = "text",
+  type = "select",
   options = null,
   ref,
   ...props
-}) {
-  if (type === "fetching") {
-    content = (
-      <>
-        <p>fetching...</p>
-      </>
-    );
-    return (
-      <div className={styles.input}>
-        <label>{label}</label>
-        {content}
-      </div>
-    );
-  }
+}: InputProps) {
   let content = (
     <>
-      <input ref={ref} type={type} name={label} {...props} />
+      <p>fetching...</p>
     </>
   );
-  if (options && type === "select") {
+  if (type !== "fetching" && options) {
     content = (
       <>
-        <select name={label} ref={ref}>
+        <select name={label} ref={ref} {...props}>
           {options.map((option) => {
             return (
               <option
@@ -42,6 +38,7 @@ export default function Input({
       </>
     );
   }
+
   return (
     <div className={styles.input}>
       <label>{label}</label>

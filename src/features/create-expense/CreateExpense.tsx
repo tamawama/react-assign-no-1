@@ -1,8 +1,20 @@
-import { Link, useLoaderData, redirect } from "react-router-dom";
+import {
+  Link,
+  useLoaderData,
+  redirect,
+  ActionFunction,
+  LoaderFunction,
+} from "react-router-dom";
 import Input from "../../components/Input";
 import styles from "./CreateExpense.module.css";
 import { Form } from "react-router-dom";
 import { createExpense, getCategories } from "../../utils/expenseApi";
+import Select from "../../components/Select";
+
+interface CategoryData {
+  id: number;
+  name: string;
+}
 
 // memoizing here does nothing, function prop always changing on page change
 function CreateExpense() {
@@ -16,10 +28,10 @@ function CreateExpense() {
       {loaderData && (
         <Form method="POST">
           <Input label="Title" />
-          <Input
+          <Select
             label="Category"
             type="select"
-            options={loaderData.map((data) => {
+            options={loaderData.map((data: CategoryData) => {
               return { value: data.id, text: data.name };
             })}
           />
@@ -36,27 +48,28 @@ function CreateExpense() {
 
 export default CreateExpense;
 
-export async function loader() {
-  const response = await getCategories();
-  if (!response.ok || response.status === 500) {
-    alert("Error fetching categories");
-    return null;
-  }
-  const resData = await response.json();
+export const loader: LoaderFunction =
+  async (): Promise<Array<CategoryData> | null> => {
+    const response = await getCategories();
+    if (!response.ok || response.status === 500) {
+      alert("Error fetching categories");
+      return null;
+    }
+    const resData = await response.json();
 
-  return resData;
-}
+    return resData;
+  };
 
-export async function action({ request }) {
+export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const expenseData = {
-    title: formData.get("Title"),
+    title: String(formData.get("Title")),
     value: Number(formData.get("Expense Amount")),
     categoryId: Number(formData.get("Category")),
   };
   const response = await createExpense(expenseData);
   if (response.ok && response.status === 201) {
-    const localData = JSON.parse(sessionStorage.getItem("expenses"));
+    const localData = JSON.parse(sessionStorage.getItem("expenses") || "{}");
     const newLocalExpense = {
       ...expenseData,
     };
@@ -67,7 +80,6 @@ export async function action({ request }) {
       newData = JSON.stringify([...localData, newLocalExpense]);
     }
     sessionStorage.setItem("expenses", newData);
-    console.log("Action:", newData);
 
     return redirect("/");
   }
@@ -78,4 +90,4 @@ export async function action({ request }) {
     );
   }
   return response;
-}
+};
