@@ -8,6 +8,7 @@ import CreateExpense, {
 import RootLayout from "./RootLayout";
 import { loader as logout } from "../features/login/Logout";
 import { authProtection, hasValidToken } from "../utils/auth";
+import { ErrorBoundry } from "./routes/ErrorBoundry";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     id: "root",
     loader: hasValidToken,
+    ErrorBoundary: ErrorBoundry,
     children: [
       { index: true, Component: Home, loader: expensesLoader },
       {
