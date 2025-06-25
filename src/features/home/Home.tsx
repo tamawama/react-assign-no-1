@@ -6,6 +6,10 @@ import { hasValidToken } from "../../utils/auth";
 import { Await, useLoaderData, useNavigate } from "react-router-dom";
 import { fetchExpenses, getCategories } from "../../utils/expenseApi";
 
+type ExpenseResponseData = {
+  invalid?: boolean;
+};
+
 export default function Home() {
   const editModal = useRef<EditModalHandler>(null);
   const nav = useNavigate();
@@ -14,8 +18,7 @@ export default function Home() {
 
   const localExpenses = JSON.parse(sessionStorage.getItem("expenses") || "{}");
 
-  // @ts-ignore idk how to properly type data here
-  expenses.then((data) => {
+  expenses.then((data: ExpenseResponseData) => {
     if (!data.invalid) {
       sessionStorage.setItem("expenses", JSON.stringify(data));
     } else {

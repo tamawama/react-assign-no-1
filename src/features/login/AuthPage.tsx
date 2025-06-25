@@ -7,6 +7,7 @@ import {
   useSearchParams,
   redirect,
   useActionData,
+  ActionFunction,
 } from "react-router-dom";
 
 export default function AuthPage() {
@@ -33,14 +34,16 @@ export default function AuthPage() {
   );
 }
 
-export async function action({ request }) {
+export const action: ActionFunction = async ({
+  request,
+}): Promise<Response | null> => {
   const searchParams = new URL(request.url).searchParams;
   const mode = searchParams.get("mode") || "login";
 
   const data = await request.formData();
   const authData = {
-    email: data.get("Email"),
-    password: data.get("Password"),
+    email: String(data.get("Email")),
+    password: String(data.get("Password")),
   };
   let response = null;
   if (mode === "login") {
@@ -52,23 +55,23 @@ export async function action({ request }) {
 
   // client side issues
   if (
-    response.status === 422 ||
-    response.status === 401 ||
-    response.status === 404
+    response!.status === 422 ||
+    response!.status === 401 ||
+    response!.status === 404
   ) {
     return response;
   }
 
-  if (!response.ok) {
+  if (!response!.ok) {
     return new Response(
       JSON.stringify({ message: "Could not authenticate user." }),
       { status: 500 }
     );
   }
 
-  const resData = await response.json();
+  const resData = await response!.json();
   const token = resData.token;
   localStorage.setItem("token", token);
 
   return redirect("/");
-}
+};
