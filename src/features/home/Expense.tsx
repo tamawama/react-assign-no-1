@@ -2,6 +2,7 @@ import styles from "./Expense.module.css";
 import { hasValidToken } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
 import { deleteExpense } from "../../utils/expenseApi";
+import { useQueryClient } from "@tanstack/react-query";
 
 export type ExpenseData = {
   id: number;
@@ -33,6 +34,7 @@ export default function Expense({
   id,
   onEdit,
 }: ExpenseProps) {
+  const queryClient = useQueryClient();
   const nav = useNavigate();
   // why is month 0-11...
   const parsedDate = new Date(date);
@@ -48,6 +50,7 @@ export default function Expense({
       }
       return;
     }
+    queryClient.invalidateQueries({ queryKey: ["expenses"] });
     return nav("");
   }
   //

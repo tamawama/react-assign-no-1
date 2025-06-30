@@ -5,25 +5,17 @@ import { ReactNode, Suspense, useRef } from "react";
 import { hasValidToken } from "../../utils/auth";
 import { Await, useLoaderData, useNavigate } from "react-router-dom";
 import { fetchExpenses, getCategories } from "../../utils/expenseApi";
-
-type ExpenseResponseData = {
-  invalid?: boolean;
-};
+import { useQueries, useQuery } from "@tanstack/react-query";
 
 export default function Home() {
   const editModal = useRef<EditModalHandler>(null);
   const nav = useNavigate();
 
-  const { expenses, categories } = useLoaderData();
+  // const { expenses, categories } = useLoaderData();
 
-  const localExpenses = JSON.parse(sessionStorage.getItem("expenses") || "{}");
-
-  expenses.then((data: ExpenseResponseData) => {
-    if (!data.invalid) {
-      sessionStorage.setItem("expenses", JSON.stringify(data));
-    } else {
-      sessionStorage.removeItem("expenses");
-    }
+  const expenses = useQuery({
+    queryKey: ["expenses"],
+    queryFn: fetchExpenses,
   });
 
   function editHandler(
@@ -39,89 +31,36 @@ export default function Home() {
       editModal.current.open({ title, category, amount, id });
     }
   }
-  const ExpensesFallback = (
-    <>
-      {localExpenses === null && (
-        <h1 className={styles.filler}>Fetching Expenses...</h1>
-      )}
-      {localExpenses &&
-        !localExpenses.invalid &&
-        (localExpenses.length > 0 ? (
-          localExpenses.map((expense: ExpenseData) => {
-            return (
-              <Expense
-                key={`_expense${expense.id}`}
-                title={expense.title}
-                category={expense.category}
-                amount={expense.value}
-                date={expense.createdAt}
-                id={expense.id}
-              />
-            );
-          })
-        ) : (
-          <h1 className={styles.filler}>No Expenses Added...</h1>
-        ))}
-    </>
-  );
   return (
     <>
       <div className={styles.scrollContainer}>
-        <Suspense fallback={ExpensesFallback}>
-          <Await resolve={expenses}>
-            {(expenses) => (
-              <>
-                {" "}
-                {expenses === null && (
-                  <h1 className={styles.filler}>Fetching Expenses...</h1>
-                )}
-                {expenses && expenses.invalid && (
-                  <h1 className={styles.filler}>Error Fetching...</h1>
-                )}
-                {expenses &&
-                  !expenses.invalid &&
-                  (expenses.length > 0 ? (
-                    expenses.map((expense: ExpenseData) => {
-                      return (
-                        <Expense
-                          key={`_expense${expense.id}`}
-                          title={expense.title}
-                          category={expense.category}
-                          amount={expense.value}
-                          date={expense.createdAt}
-                          id={expense.id}
-                          onEdit={editHandler}
-                        />
-                      );
-                    })
-                  ) : (
-                    <h1 className={styles.filler}>No Expenses Added...</h1>
-                  ))}
-              </>
-            )}
-          </Await>
-        </Suspense>
+        {expenses.isFetching && (
+          <h1 className={styles.filler}>Fetching Expenses...</h1>
+        )}
+        {expenses.isError && (
+          <h1 className={styles.filler}>Error Fetching...</h1>
+        )}
+        {expenses.isFetched &&
+          !expenses.isError &&
+          (expenses.data?.length! > 0 ? (
+            expenses.data?.map((expense: ExpenseData) => {
+              return (
+                <Expense
+                  key={`_expense${expense.id}`}
+                  title={expense.title}
+                  category={expense.category}
+                  amount={expense.value}
+                  date={expense.createdAt}
+                  id={expense.id}
+                  onEdit={editHandler}
+                />
+              );
+            })
+          ) : (
+            <h1 className={styles.filler}>No Expenses Added...</h1>
+          ))}
       </div>
-      <EditModal ref={editModal} categories={categories} />
+      <EditModal ref={editModal} />
     </>
   );
-}
-
-export async function loader() {
-  const expenses = new Promise((res) => {
-    async function innerExpensesPromise() {
-      const expensesRes = await fetchExpenses();
-      if (expensesRes.ok) {
-        const expensesData = await expensesRes.json();
-        res(expensesData);
-      } else {
-        res({ invalid: true });
-      }
-    }
-    innerExpensesPromise();
-  });
-
-  const categoryResponse = await getCategories();
-  const categories = await categoryResponse.json();
-  return { expenses, categories };
 }

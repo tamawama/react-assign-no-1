@@ -2,8 +2,9 @@ import { Suspense, useImperativeHandle, useRef } from "react";
 import Input from "../../components/Input";
 import Select from "../../components/Select";
 import styles from "./EditModal.module.css";
-import { updateExpense } from "../../utils/expenseApi";
+import { getCategories, updateExpense } from "../../utils/expenseApi";
 import { Await, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 export type EditModalHandler = {
   open: (parameters: EditParameters) => void;
@@ -16,16 +17,9 @@ export interface EditParameters {
   id: number;
 }
 
-type category = {
-  id: number;
-  name: string;
-};
-
 export default function EditModal({
   ref,
-  categories,
 }: {
-  categories: category[];
   ref: React.Ref<EditModalHandler>;
 }) {
   const nav = useNavigate();
@@ -35,6 +29,11 @@ export default function EditModal({
   const titleRef = useRef<HTMLInputElement>(null);
   const categoryRef = useRef<HTMLSelectElement>(null);
   const amountRef = useRef<HTMLInputElement>(null);
+
+  const categories = useQuery({
+    queryKey: ["category"],
+    queryFn: getCategories,
+  });
 
   useImperativeHandle(ref, () => {
     return {
@@ -80,18 +79,16 @@ export default function EditModal({
       <div className={styles.center}>
         <div className={styles.modal}>
           <Input label="Title" ref={titleRef} />
-          <Suspense fallback={<Input label="Category" type="fetching" />}>
-            <Await resolve={categories}>
-              <Select
-                label="Category"
-                type="select"
-                options={categories.map((data) => {
-                  return { value: data.id, text: data.name };
-                })}
-                ref={categoryRef}
-              />
-            </Await>
-          </Suspense>
+          <Select
+            label="Category"
+            type="select"
+            options={
+              categories.data?.map((data) => {
+                return { value: data.id, text: data.name };
+              }) || null
+            }
+            ref={categoryRef}
+          />
 
           <Input
             label="Expense Amount"
@@ -101,11 +98,8 @@ export default function EditModal({
           />
           <form method="dialog" className={styles.buttons}>
             <button>Cancel</button>
-            <Suspense fallback={<p>"loading..."</p>}>
-              <Await resolve={categories}>
-                <button onClick={saveHandler}>Save</button>
-              </Await>
-            </Suspense>
+
+            <button onClick={saveHandler}>Save</button>
           </form>
         </div>
       </div>

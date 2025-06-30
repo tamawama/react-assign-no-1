@@ -1,13 +1,16 @@
 const EXPENSE_API_ENDPOINT = "http://localhost:8080/api";
 
-export async function getCategories(): Promise<Response> {
+export async function getCategories(): Promise<{ id: number; name: string }[]> {
   const response = await fetch(`${EXPENSE_API_ENDPOINT}/categories`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
-  return response;
+  if (response.ok) {
+    return response.json();
+  }
+  throw new Error("placeholder");
 }
 
 export async function signup(authData: {
@@ -47,15 +50,25 @@ export async function logout(): Promise<Response> {
   });
   return response;
 }
-export async function fetchExpenses(): Promise<Response> {
+export async function fetchExpenses(): Promise<
+  {
+    id: number;
+    title: string;
+    category: { name: string; id: number };
+    value: number;
+    createdAt: string;
+  }[]
+> {
   const response = await fetch(`${EXPENSE_API_ENDPOINT}/expenses`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
-
-  return response;
+  if (response.ok) {
+    return await response.json();
+  }
+  throw new Error("placeholder");
 }
 
 export async function createExpense(expenseData: {
